@@ -16,8 +16,41 @@ Should you find this repository as a useful tool for research or application, pl
 
 ## Adaptive mesh refinement (AMR) & Phase field (PF) fracture model
 
-The second order phase field fracture model codes used to generate the training-, validation-, and test-set are included in
-      
+The second order phase field fracture model codes used to generate the training-, validation-, and test-set are included in directory: Phase-Field-Fracture-Model
+The adaptive mesh refinement used in the developed ADAPT-GNN framework is also included in directory: Phase-Field-Fracture-Model
+
+We thank the authors in "Adaptive fourth-order phase field analysis for brittle fracture" for providing the open-source phase field model found in [IGAPack-PhaseField](https://github.com/somdattagoswami/IGAPack-PhaseField)
+
+      @article{GOSWAMI2020112808,
+            title = {Adaptive fourth-order phase field analysis for brittle fracture},
+            journal = {Computer Methods in Applied Mechanics and Engineering},
+            volume = {361},
+            pages = {112808},
+            year = {2020},
+            issn = {0045-7825},
+            doi = {https://doi.org/10.1016/j.cma.2019.112808},
+            url = {https://www.sciencedirect.com/science/article/pii/S0045782519307005},
+            author = {Somdatta Goswami and Cosmin Anitescu and Timon Rabczuk},
+            keywords = {Brittle fracture, Fourth-order, Phase field, Adaptive, Stress-degradation, PHT-splines}
+      }
+
+### Changing initial crack length, angle, and edge position
+
+#### Crack edge position and crack angle in code: Phase-Field-Fracture-Model/SingleEdgeTension.m
+
+1) Line 14, adder = 0.05+0.05*i, defines the edge position in a for loop iterating through "i". 
+   E.g., when i=5, the crack edge position will be at the left edge with y = 0.30cm
+    
+2) To change the crack angle, line 15, angles_stored = [45], defines a list with the angle in degrees.
+   Note that you can include more angles in the list angles_stored to iterate through a various crack angles
+   
+#### Crack length in code: Phase-Field-Fracture-Model/utils/history_tensile.m
+
+2) Line 13, crack_size = 0.1, defines the value of the desired crack length.
+   Note that you can include a global variable in code: <Phase-Field-Fracture-Model/SingleEdgeTension.m> to iterate through a series of crack lengths
+
+
+
 ## Models:
 
 ### Message-Passing Model
@@ -35,5 +68,5 @@ NOTE: Found in src/models.py
 The ATGCN was used to use the latent space information generated from GINE in order to propagate the system in time.
 Two similar ATGCNs were used for XDisp-GNN and YDisp-GNN, and a modified ATGCN was used for cPhi-GNN.
 
-## Dataset:
+## utils:
 
