@@ -1,63 +1,17 @@
-import copy
 import torch
 from torch import Tensor
-from torch.nn import Linear as Lin
-import torch.nn.utils.rnn as rnn_utils
-from torch.nn import Sequential as Seq
-from torch.utils.data import DataLoader
-
-import torch_geometric
-from torch_geometric.data import Dataset
-from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
-
-from typing import Any, Callable, Optional, Union
-
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.spatial import Delaunay
-from collections import OrderedDict
-import torch
-import os
-#from torch.utils.data import Dataset
-import torch_geometric
-from torch_geometric.data import Dataset
-from torch_geometric.data import Data
-import networkx as nx
-import matplotlib.pyplot as plt
-from config_HPC_Latest import args_generator
-import numpy as np
-import glob
-from scipy.spatial import Delaunay
-from collections import OrderedDict
-from torch.utils.data import DataLoader
 import torch.nn.functional as F
-from torch_geometric.nn import GCNConv
-#from progressbar import ProgressBar
+from torch.nn import Linear as Lin
+from torch.nn import Sequential as Seq
+
+import torch_geometric
+from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn import MessagePassing
-from torch_geometric.utils import add_self_loops, degree
-#from ogb.graphproppred import Evaluator
-#from ogb.graphproppred import PygGraphPropPredDataset as OGBG
-#from ogb.graphproppred.mol_encoder import AtomEncoder
-from torch.nn import BatchNorm1d, Linear, ReLU, Sequential
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-import argparse
-import os.path as osp
-import torch.nn.utils.rnn as rnn_utils
-import torch_geometric.transforms as T
-from torch_geometric.loader import DataLoader
-from torch_geometric.nn import EGConv, global_mean_pool
-from typing import Optional, Tuple
-from torch import Tensor
-from torch.nn import Parameter
-from torch_sparse import SparseTensor, matmul
-from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj
-from tqdm import tqdm
-#from torch_geometric_temporal.signal import temporal_signal_split
-import seaborn as sns
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
+from typing import Any, Callable, Optional, Union
 from torch_geometric_temporal.nn.recurrent import A3TGCN2 
 
+import numpy as np
 from config_HPC_Latest import args_generator
 
 args = args_generator()
@@ -363,7 +317,7 @@ class TemporalGNN(torch.nn.Module):
         return h
 
 
-if phase == 'train':
+'''if phase == 'train':
     if args.GNN_Model == 'cPhi_GNN':
         TemporalGNN(node_features=9, periods=1, batch_size=args.batch_size)
     else:
@@ -416,4 +370,4 @@ else:
     if phase == 'train':
         model = TemporalGNN(node_features=9, periods=1, batch_size=4)
     elif phase == 'eval':
-        model = TemporalGNN(node_features=9, periods=1, batch_size=1)
+        model = TemporalGNN(node_features=9, periods=1, batch_size=1)'''
