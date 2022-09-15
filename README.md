@@ -68,5 +68,21 @@ NOTE: Found in src/models.py
 The ATGCN was used to use the latent space information generated from GINE in order to propagate the system in time.
 Two similar ATGCNs were used for XDisp-GNN and YDisp-GNN, and a modified ATGCN was used for cPhi-GNN.
 
-## utils:
+## Utilities:
+NOTE: Found in src/utils.py 
+
+All utilities/functions including the nearest neighbors generation (nodes and edges), the adaptive mesh refinement generation, nodes and edges features generators, a function for converting the phase field fracture model's .mat files to numpy and .pt format, and more can be found here.  
+
+
+## Dataloader:
+NOTE: Found in src/dataloader.py 
+
+Includes the dataloader class for XDisp-, YDisp-, and cPhi-GNN. The format is developed for compatibility with Pytorch Geometric (PyG)   
+
+
+## Arguments:
+NOTE: Found in src/config_HPC_Latest.py
+
+Arguments used are described
+
 
