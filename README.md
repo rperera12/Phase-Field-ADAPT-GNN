@@ -56,7 +56,7 @@ We thank the authors in "Adaptive fourth-order phase field analysis for brittle 
 ### Message-Passing Model
 NOTE: Found in src/models.py 
 
-The message-passing model used was Graph Isomorphism Network with Edge Features (GINE) - from the opem-source Pytorch Geometric Libraries.
+The message-passing model used was Graph Isomorphism Network with Edge Features (GINE) - from the open-source Pytorch Geometric Libraries.
 In src/models.py you will find models for various number of message-passing steps.
 In the article we cover the optimal number of message-passing steps found for each model (XDisp-GNN, YDisp-GNN, and cPhi-GNN). 
 But you are free to modify them and test different models.
