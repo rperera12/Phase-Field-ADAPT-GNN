@@ -23,44 +23,6 @@ def check_dir(PATH):
 #########################################################################
 #########################################################################
 #########################################################################
-def my_collate(batch):
-    len_batch = len(batch[0])
-    len_rel = 2
-
-    ret = []
-    for i in range(len_batch - len_rel):
-        d = [(item[i]) for item in batch]
-        if isinstance(d[0], int):
-            d = torch.LongTensor(d)
-        else:
-            d = torch.FloatTensor(torch.stack(d))
-        ret.append(d)
-
-    # processing relations
-    # R: B x seq_length x n_rel x (n_p + n_s)
-    for i in range(len_rel):
-        R = [item[-len_rel + i] for item in batch]
-        max_n_rel = 0
-        seq_length, _, N = R[0].size()
-        for j in range(len(R)):
-            max_n_rel = max(max_n_rel, R[j].size(1))
-        for j in range(len(R)):
-            r = R[j]
-            zeros_test = torch.zeros(seq_length,max_n_rel - r.size(1), N)
-            r = torch.cat([r, zeros_test], 1)
-            R[j] = r
-
-        R = torch.FloatTensor(torch.stack(R))
-
-        ret.append(R)
-
-    return tuple(ret)
-
-
-
-#########################################################################
-#########################################################################
-#########################################################################
 def get_temp(SimNO, LoadStep):
     str_load = args.train_dir + 'Matlab/' + str(SimNO) + '_Case/Loadstep_' + str(LoadStep+1) +'_SaveVariables.mat'
     temp = scipy.io.loadmat(str_load)    
@@ -498,8 +460,8 @@ def plot_active_inactive(Xs, Ys, Xn, Yn):
 def get_neighbors(AI_MAT, Xs, Ys, neighbor_radius):
     nCracks = len(AI_MAT[:])
     n_active = len(Xs)
-    queries_active = np.arange(n_active)
-    anchors_active = np.arange(n_active)
+    queue_active = np.arange(n_active)
+    remain_active = np.arange(n_active)
 
     pos = np.zeros([n_active,2])
 
@@ -509,10 +471,10 @@ def get_neighbors(AI_MAT, Xs, Ys, neighbor_radius):
         pos[ii,0] = Xs[ii]
         pos[ii,1] = Ys[ii]
 
-    point_tree = spatial.cKDTree(pos[anchors_active])
-    neighbors = point_tree.query_ball_point(pos[queries_active], neighbor_radius, p=2)
+    point_tree = spatial.cKDTree(pos[remain_active])
+    neighbors = point_tree.query_ball_point(pos[queue_active], neighbor_radius, p=2)
 
-    rels = []
+    neights = []
     min_neighbors = None
     for i in range(len(neighbors)):
         if min_neighbors is None:
@@ -523,21 +485,21 @@ def get_neighbors(AI_MAT, Xs, Ys, neighbor_radius):
             pass
 
     for i in range(len(neighbors)):
-        receiver = np.ones(min_neighbors, dtype=np.int) * queries_active[i]
-        sender = np.array(anchors_active[neighbors[i][:min_neighbors]])
-        rels.append(np.stack([receiver, sender], axis=1))
+        receiver = np.ones(min_neighbors, dtype=np.int) * queue_active[i]
+        sender = np.array(remain_active[neighbors[i][:min_neighbors]])
+        neights.append(np.stack([receiver, sender], axis=1))
     
     
     if len(rels) > 0:
         rels = np.concatenate(rels, 0)
 
-    n_rel = rels.shape[0]
-    Rr = torch.zeros(n_rel, n_active)
-    Rs = torch.zeros(n_rel, n_active)
-    Rr[np.arange(n_rel), rels[:, 0]] = 1
-    Rs[np.arange(n_rel), rels[:, 1]] = 1
+    n_neight = neights.shape[0]
+    Ar = torch.zeros(n_neight, n_active)
+    As = torch.zeros(n_neight, n_active)
+    Ar[np.arange(n_neight), neights[:, 0]] = 1
+    As[np.arange(n_neight), neights[:, 1]] = 1
 
-    return Rr, Rs   
+    return Ar, As   
 
 
 
@@ -572,7 +534,7 @@ def neighboring_nodes(neighbors,Xs):
                     c_neighbor_s = np.append(c_neighbor_s, (cur_crack[k]))
                 
 
-    print('The shape of c_neighbor is ', c_neighbor_r.shape)
+    print('Shape of c_neighbor is: %a' % c_neighbor_r.shape)
     return c_neighbor_r, c_neighbor_s
 
 
@@ -613,7 +575,7 @@ def create_relations(receiver, sender, Xs):
 #########################################################################
 #########################################################################
 #########################################################################
-def Rotation_Matrices(relations, Xs):
+def Adjacency_Matrices(relations, Xs):
     nCracks = len(Xs[:])
 
     if len(relations) > 0:
@@ -621,75 +583,15 @@ def Rotation_Matrices(relations, Xs):
 
     count_rels = rels.shape[0]
     
-    Rr = torch.zeros(count_rels, nCracks*2) 
-    Rs = torch.zeros(count_rels, nCracks*2)  
-    Rr[np.arange(count_rels), rels[:,0]] = 1
-    Rs[np.arange(count_rels), rels[:,1]] = 1   
+    Ar = torch.zeros(count_rels, nCracks*2) 
+    As = torch.zeros(count_rels, nCracks*2)  
+    Ar[np.arange(count_rels), rels[:,0]] = 1
+    As[np.arange(count_rels), rels[:,1]] = 1   
 
-    return Rr, Rs
-
-
-
-class AverageMeter(object):
-    def __init__(self):
-        self.val = 0
-        self.avg = 0
-        self.sum = 0
-        self.count = 0
-
-    def reset(self):
-        self.val = 0
-        self.avg = 0
-        self.sum = 0
-        self.count = 0
-
-    def update(self, val, n=1):
-        self.val = val
-        self.sum += val * n
-        self.count += n
-        self.avg = self.sum / self.count
-
-
-def check_gradient(step):
-    def hook(grad):
-        print(step, torch.mean(grad, 1)[:4])
-    return hook
-
-
-def add_log(fn, content, is_append=True):
-    if is_append:
-        with open(fn, "a+") as f:
-            f.write(content)
-    else:
-        with open(fn, "w+") as f:
-            f.write(content)
-
-
-def rand_int(lo, hi):
-    return np.random.randint(lo, hi)
-
-
-def rand_float(lo, hi):
-    return np.random.rand() * (hi - lo) + lo
-
-
-def count_parameters(model):
-    return sum(p.numel() for p in model.parameters() if p.requires_grad)
-
-
-def to_var(tensor, use_gpu, requires_grad=False):
-    if use_gpu:
-        return Variable(torch.FloatTensor(tensor).cuda(),
-                        requires_grad=requires_grad)
-    else:
-        return Variable(torch.FloatTensor(tensor),
-                        requires_grad=requires_grad)   
+    return Ar, As
 
 
 
-def get_lr(optimizer):
-    for param_group in optimizer.param_groups:
-        return param_group['lr']
     
 
 if __name__ == "__main__":
