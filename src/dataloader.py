@@ -390,7 +390,7 @@ def output_data(args, X, Y, c_Phi, SVM, Xdisp, Ydisp, deltaD):
 
 
 
-class MyOwnDataset(Dataset):
+class ADAPTDataset(Dataset):
     def __init__(self, args):
         super().__init__(args)
 
