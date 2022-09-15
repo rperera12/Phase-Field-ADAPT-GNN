@@ -65,7 +65,7 @@ The output from the GINE models are the vertex and edge features in the latent s
 ### Attention Temporal Graph Convolutional Networks (ATGCN)
 NOTE: Found in src/models.py
 
-The ATGCN was used to use the latent space information generated from GINE in order to propagate the system in time.
+The ATGCN uses the latent space information generated from GINE in order to propagate the system in time.
 Two similar ATGCNs were used for XDisp-GNN and YDisp-GNN, and a modified ATGCN was used for cPhi-GNN.
 
 ## Utilities:
