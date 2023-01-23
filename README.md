@@ -52,6 +52,14 @@ We thank the authors in "Adaptive fourth-order phase field analysis for brittle 
    Note that you can include a global variable in code: <Phase-Field-Fracture-Model/SingleEdgeTension.m> to iterate through a series of crack lengths
 
 
+## Training files:
+NOTE: Found in src/train_cPhi_LinearInterp_Laplacian.py 
+
+New updated trainer file for cPhi_GNN using Attention Temporal Graph Convolutional Networks (ATGCN).
+Laplacian node features included.
+Training data sample included in src/train_pt_cPhi/16_Case.
+Pretrained weights can be found in src/save_dir/
+
 
 ## Models:
 
