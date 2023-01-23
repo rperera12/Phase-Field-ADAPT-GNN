@@ -1,6 +1,8 @@
 # Phase-Field-ADAPT-GNN
 ADAPTive mesh-based Graph Neural Network (ADAPT-GNN) for simulating phase field fracture models
 
+![Sample Animation](Supplementary_Figure_3.gif "Phase-field VS. ADAPT-GNN")
+
 Should you find this repository as a useful tool for research or application, please kindly cite the original article [Dynamic and adaptive mesh-based graph neural network framework for simulating displacement and crack fields in phase field models](https://arxiv.org/abs/2208.14364v2)
 
       @misc{https://doi.org/10.48550/arxiv.2208.14364,
